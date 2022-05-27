@@ -39,7 +39,7 @@ def shop(request, pk=None, page=1):
     if pk:
         products = Product.objects.filter(category_id=pk, published=True)
     else:
-        products = Product.objects.all()
+        products = Product.objects.filter(published=True)
 
     # pagination block starts
     paginator = Paginator(products, 6) # 3 items on every page
