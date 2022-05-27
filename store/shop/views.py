@@ -35,13 +35,13 @@ def shop(request, pk=None, page=1):
         'title': 'Nadin Shop - Product Listing Page',
         'categories': ProductCategory.objects.all(),
     }
+
     if pk:
-        context.update({'category_name': ProductCategory.objects.get(id=pk)})
+        products = Product.objects.filter(category_id=pk, published=True)
     else:
-        context.update({'category': Product.objects.all()})
+        products = Product.objects.all()
 
     # pagination block starts
-    products = Product.objects.filter(published=True)
     paginator = Paginator(products, 6) # 3 items on every page
     products_paginator = paginator.page(page)
     context.update({'products': products_paginator})

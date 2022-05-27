@@ -15,8 +15,8 @@ class ProductCategory(MPTTModel):
     class Meta:
         verbose_name_plural = 'Product categories'
 
-    def get_absolute_url(self):
-        return reverse('category', kwargs={"pk": self.pk})
+    # def get_absolute_url(self):
+    #     return reverse('category', kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.name
