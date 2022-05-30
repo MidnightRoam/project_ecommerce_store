@@ -1,9 +1,11 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, HttpResponseRedirect
-from django.views.generic import ListView, DetailView
+from django.shortcuts import render, redirect, HttpResponseRedirect, HttpResponse
+from django.views.generic import ListView, DetailView, CreateView
 from django.views.generic.base import View
+from django.core.mail import send_mail, BadHeaderError
 
 from shop.models import ProductCategory, Product, Cart
+from users.forms import ContactForm
 from .forms import ReviewForm, SortForm
 
 
@@ -74,21 +76,29 @@ class ProductView(DetailView):
 #     return render(request, 'shop/shop-single.html', context)
 
 
-class Contact(ListView):
-    """Render contact page"""
-    model = Product
-    template_name = 'shop/contact.html'
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = "Test message"
+            body = {
+                'name': form.cleaned_data['name'],
+                'email': form.cleaned_data['email'],
+                'subject': form.cleaned_data['subject'],
+                'message': form.cleaned_data['message'],
+            }
+            message = "\n".join(body.values())
+            try:
+                send_mail(subject, message,
+                          'admin@example.com',
+                          ['admin@example.com'])
+            except BadHeaderError:
+                return HttpResponse('Find incorrect header')
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Nadin Shop - Contact'
-        return context
+            return redirect('index')
 
-# def contact(request):
-#     context = {
-#         'title': 'Nadin Shop - Contact',
-#     }
-#     return render(request, 'shop/contact.html', context)
+    form = ContactForm()
+    return render(request, 'shop/contact.html', {'form': form, 'title': 'Nadin Shop - Contact Page'})
 
 
 class Search(ListView):

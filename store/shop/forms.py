@@ -2,7 +2,6 @@ from django import forms
 
 from .models import Reviews
 
-
 class ReviewForm(forms.ModelForm):
     """Reviews form"""
     class Meta:
@@ -15,3 +14,5 @@ class SortForm(forms.ModelForm):
                                                 ('price_lth', 'From low to high price'),
                                                 ('price_htl', 'From high to low price')
                                                 ])
+
+

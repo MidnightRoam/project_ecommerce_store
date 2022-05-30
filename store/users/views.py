@@ -1,10 +1,12 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail, BadHeaderError
 
-from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm, ContactForm
 from shop.models import Cart
+
 
 def login(request):
     if request.method == 'POST':
@@ -20,6 +22,11 @@ def login(request):
         form = UserLoginForm()
     context = {'form': form}
     return render(request, 'users/login.html', context)
+
+
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect(reverse('index'))
 
 
 def register(request):
@@ -50,7 +57,7 @@ def profile(request):
     total_sum = sum(cart.sum() for cart in carts)
 
     context = {
-        'form': form,'title': 'Nadin Shop - Profile Page',
+        'form': form, 'title': 'Nadin Shop - Profile Page',
         'carts': Cart.objects.filter(user=user),
         'total_quantity': total_quantity,
         'total_sum': total_sum,
@@ -58,7 +65,26 @@ def profile(request):
     return render(request, 'users/profile.html', context)
 
 
-def logout(request):
-    auth.logout(request)
-    return HttpResponseRedirect(reverse('index'))
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = "Test message"
+            body = {
+                'name': form.cleaned_data['name'],
+                'email': form.cleaned_data['email'],
+                'subject': form.cleaned_data['subject'],
+                'message': form.cleaned_data['message'],
+            }
+            message = "\n".join(body.values())
+            try:
+                send_mail(subject, message,
+                          'admin@example.com',
+                          ['admin@example.com'])
+            except BadHeaderError:
+                return HttpResponse('Find incorrect header')
 
+            return HttpResponseRedirect('/')
+
+    form = ContactForm()
+    return render(request, 'shop/contact.html', {'form': form, 'title': 'Nadin Shop - Contact Page'})

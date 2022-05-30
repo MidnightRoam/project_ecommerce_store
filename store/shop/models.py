@@ -55,6 +55,8 @@ class Cart(models.Model):
         return self.quantity * self.product.price
 
 
+
+
 class RatingStar(models.Model):
     """Star of rating"""
     value = models.SmallIntegerField('Value', default=0)

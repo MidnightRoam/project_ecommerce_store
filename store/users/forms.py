@@ -35,3 +35,14 @@ class UserProfileForm(UserChangeForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'image', 'username', 'email')
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-group col-md-6 mb-3', 'placeholder': 'Name'}), max_length=100)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={
+        'class': 'form-group col-md-6 mb-3', 'placeholder': 'Email'}), max_length=150)
+    subject = forms.CharField(widget=forms.TextInput(attrs={
+        'class':  'mb-3', 'placeholder': 'Subject'}), max_length=250)
+    message = forms.CharField(widget=forms.Textarea(attrs={
+        'class': 'mb-3', 'placeholder': 'Message'}), max_length=2000)

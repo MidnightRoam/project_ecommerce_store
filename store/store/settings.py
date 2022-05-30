@@ -139,3 +139,5 @@ MPTT_ADMIN_LEVEL_INDENT = 20
 AUTH_USER_MODEL = 'users.User'
 
 LOGIN_URL = '/users/login/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
